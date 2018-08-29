@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Codepage="1252" Language="1033" Manufacturer="$(var.ProductName)" Name="$(var.ProductName)" UpgradeCode="{9534A27D-FC9C-452B-92CB-F2D5F6B3AB34}" Version="$(var.Version)">
+    <Package InstallerVersion="405" Compressed="yes" />
+    <MajorUpgrade
+      Schedule="afterInstallInitialize"
+      DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit."/>
+
+    <PropertyRef Id="NETFRAMEWORK45"/>
+    <Condition Message="This application requires .NET Framework 4.5. Please install the .NET Framework then run this installer again.">
+      <![CDATA[Installed OR NETFRAMEWORK45]]>
+    </Condition>
+
+    <Media Id="1" Cabinet="$(var.ProductName).cab" EmbedCab="yes" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="$(var.ProductName)">
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductName)"/>
+      </Directory>
+      <Directory Id="AppDataFolder" Name="AppDataFolder">
+        <Directory Id="MyAppFolder" Name="$(var.ProductName)">
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+    <UIRef Id="WixUI_InstallDir" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="6484FD52-73DD-11E2-9B33-D46D6188709B">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="$(var.ProductName)"
+                  Description="$(var.ProductName) - Programmable Input Emulator"
+                  Target="[INSTALLFOLDER]FreePIE.exe"
+                  WorkingDirectory="INSTALLFOLDER"/>
+        <Shortcut Id="UninstallProduct"
+                  Name="Uninstall $(var.ProductName)"
+                  Target="[SystemFolder]msiexec.exe"
+                  Arguments="/x [ProductCode]"
+                  Description="Uninstalls $(var.ProductName)" />
+        <RemoveFolder Id="INSTALLFOLDER" On="uninstall"/>
+        <RemoveFolder Id="RemoveAppData" Directory="MyAppFolder" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\$(var.ProductName)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+        <RegistryValue Root="HKCU" Key="Software\$(var.ProductName)" Name="path" Type="string" Value="[INSTALLFOLDER]" KeyPath="no"/>
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Merge Id="VCRedist" SourceFile="Microsoft_VC100_CRT_x86.msm" DiskId="1" Language="0"/>      
+    </DirectoryRef>
+
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Merge Id="VCRedist11" SourceFile="Microsoft_VC110_CRT_x86.msm" DiskId="1" Language="0"/>
+    </DirectoryRef>
+
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Merge Id="VCRedist12" SourceFile="Microsoft_VC120_CRT_x86.msm" DiskId="1" Language="0"/>
+    </DirectoryRef>
+
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Merge Id="VCRedist14" SourceFile="Microsoft_VC140_CRT_x86.msm" DiskId="1" Language="0"/>
+    </DirectoryRef>
+
+    <Icon Id="icon.ico" SourceFile="free-pie.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+
+    <Feature Id="ProductFeature" Title="$(var.ProductName)" ConfigurableDirectory="INSTALLFOLDER" Description="This will install $(var.ProductName) on the computer" Level="1">
+      <ComponentGroupRef Id="Output"/>
+      <ComponentRef Id="ApplicationShortcut" />
+    </Feature>
+
+    <Feature Id="VCRedist" Title="Visual C++ 10.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+      <MergeRef Id="VCRedist"/>
+    </Feature>
+
+    <Feature Id="VCRedist11" Title="Visual C++ 11.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+      <MergeRef Id="VCRedist11"/>
+    </Feature>
+
+    <Feature Id="VCRedist12" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+      <MergeRef Id="VCRedist12"/>
+    </Feature>
+
+    <Feature Id="VCRedist14" Title="Visual C++ 14.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+      <MergeRef Id="VCRedist14"/>
+    </Feature>
+  </Product>
+</Wix>

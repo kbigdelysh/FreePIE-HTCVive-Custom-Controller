@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="FreePIE.GUI.Views.Script.ScriptEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:AvalonEdit="clr-namespace:FreePIE.GUI.Common.AvalonEdit"
+             xmlns:cal="http://www.caliburnproject.org"
+             xmlns:Script="clr-namespace:FreePIE.GUI.Views.Script"
+             xmlns:CodeCompletion="clr-namespace:FreePIE.GUI.CodeCompletion;assembly=FreePIE.GUI.CodeCompletion">
+    <Grid FocusManager.FocusedElement="{Binding ElementName=textEditor}">
+        <AvalonEdit:BindableScriptEditor            
+				x:Name="textEditor"            
+				FontFamily="Consolas"
+				FontSize="10pt"
+				SyntaxHighlighting="Python"   
+                Script="{ Binding Path=Script, Mode=TwoWay}"    
+                Replacer="{ Binding Path=Replacer, Mode=TwoWay}"    
+                IsEnabled="{ Binding Enabled}"
+                Caret="{ Binding Path=CaretPosition, Mode=TwoWay }"
+                ShowLineNumbers="True">
+            <AvalonEdit:BindableScriptEditor.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Cut" Command="Cut">
+                        <MenuItem.Icon>
+                            <Image Source="{StaticResource IconCut}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Copy" Command="Copy">
+                        <MenuItem.Icon>
+                            <Image Source="{StaticResource IconCopy}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Paste" Command="Paste">
+                        <MenuItem.Icon>
+                            <Image Source="{StaticResource IconPaste}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Find" Command="Find">
+                        <MenuItem.Icon>
+                            <Image Source="{StaticResource IconFind}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>                    
+                </ContextMenu>
+            </AvalonEdit:BindableScriptEditor.ContextMenu>
+        </AvalonEdit:BindableScriptEditor>
+        <CodeCompletion:CompletionPopupView cal:Bind.Model="{ Binding RelativeSource={RelativeSource FindAncestor,
+                                                                                               AncestorType={x:Type Script:ScriptEditorView}},
+                                                                                               Path=DataContext.CompletionWindow }"
+                                      Target="{Binding ElementName=textEditor, Path=TextArea, Converter={CodeCompletion:EditorAdapterConverter}}">
+      </CodeCompletion:CompletionPopupView>
+    </Grid>
+</UserControl>
