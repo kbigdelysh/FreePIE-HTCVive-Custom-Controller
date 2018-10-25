@@ -3,7 +3,6 @@ bin
 obj
 *.suo
 *.user
-*.py
 *.bak
 *.lua
 
